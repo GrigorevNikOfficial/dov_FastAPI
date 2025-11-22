@@ -1,0 +1,9 @@
+Необходимые шаги для запуска приложения:
+
+1. Установить необходимые библиотеки
+pip install fastapi "uvicorn[standard]" jinja2 sqlalchemy pydantic python-multipart psycopg
+
+2. Меняем app/core/config.py на актуальную датабазу
+
+3. Запускаем сервер
+uvicorn app.main:app --reload
