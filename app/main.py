@@ -13,6 +13,7 @@ from .routers import customers
 from .routers import departments
 from .routers import positions
 from .routers import proxies
+from .routers import sales_agreements
 
 
 app = FastAPI(title="Доверенности (FastAPI)")
@@ -40,3 +41,4 @@ app.include_router(customers.router, prefix="/customers", tags=["customers"])
 app.include_router(departments.router, prefix="/departments", tags=["departments"])
 app.include_router(positions.router, prefix="/positions", tags=["positions"])
 app.include_router(proxies.router, prefix="/proxies", tags=["proxies"])
+app.include_router(sales_agreements.router, prefix="/sales-agreements", tags=["sales-agreements"])

@@ -7,3 +7,4 @@ from .customers import Customer
 from .departments import Department
 from .positions import Position
 from .proxies import Proxy, ProxyItem
+from .sales_agreements import SalesAgreement, SalesAgreementItem

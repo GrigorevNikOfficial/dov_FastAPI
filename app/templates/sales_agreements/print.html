@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      Договор купли-продажи №{{ agreement.agreement_number or agreement.id }}
+    </title>
+    <link rel="stylesheet" href="/static/css/print.css" />
+  </head>
+  <body>
+    <div class="screen-toolbar">
+      <a class="btn" href="javascript:window.print()">Печать</a>
+      <a class="btn" href="/sales-agreements">Назад к списку</a>
+    </div>
+
+    {% set totals = namespace(sum=0) %} {% for item in agreement.items %} {% set
+    totals.sum = totals.sum + (item.quantity * item.price) %} {% endfor %} {% if
+    agreement.vat_rate %} {% set vat_amount = totals.sum * agreement.vat_rate /
+    (100 + agreement.vat_rate) %} {% else %} {% set vat_amount = None %} {%
+    endif %}
+
+    <div class="container-doc">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          font-weight: 600;
+          margin-bottom: 6mm;
+        "
+      >
+        <div>Продавец: {{ agreement.organization.name }}</div>
+        <div>Покупатель: {{ agreement.customer.name }}</div>
+      </div>
+
+      <div class="doc-title">
+        Договор розничной купли-продажи № {{ agreement.agreement_number or
+        agreement.id }}
+      </div>
+
+      <div style="text-align: center; margin-bottom: 6mm">
+        {{ agreement.city or '___' }}, «{{ agreement.agreement_date|rusdate }}»
+      </div>
+
+      <p>
+        {{ agreement.organization.name }} (далее – «Продавец»), в лице {{
+        agreement.seller_representative }}, действующего на основании {{
+        agreement.seller_basis }}, с одной стороны, и {{ agreement.customer.name
+        }} (паспорт серия {{ agreement.buyer_passport_series or '____' }} № {{
+        agreement.buyer_passport_number or '____' }}, выдан {{
+        agreement.buyer_passport_issued_by or '________________' }}, {{
+        agreement.buyer_passport_issued_at|rusdate if
+        agreement.buyer_passport_issued_at else '«__» ______ ____ г.' }},
+        именуемый далее «Покупатель», с другой стороны, совместно именуемые
+        «Стороны», заключили настоящий договор о нижеследующем.
+      </p>
+
+      <h3>1. Предмет договора</h3>
+      <p>
+        1.1. Продавец обязуется передать Покупателю, а Покупатель принять и
+        оплатить {{ agreement.subject_description or 'товары согласно приложению
+        (таблице) к настоящему договору' }} (далее – «Товар») на условиях
+        настоящего договора.
+      </p>
+      <p>
+        1.2. Товар приобретается Покупателем для личного, семейного, домашнего
+        или иного использования, не связанного с предпринимательской
+        деятельностью.
+      </p>
+
+      <h3>2. Права и обязанности сторон</h3>
+      <p>
+        Стороны руководствуются положениями Закона РФ от 07.02.1992 №2300-1 «О
+        защите прав потребителей» и иных нормативных актов.
+      </p>
+
+      <h3>3. Порядок передачи и приемки товара</h3>
+      <p>
+        3.1. Передача Товара осуществляется в месте нахождения Продавца сразу
+        после оплаты.
+      </p>
+      <p>
+        3.2. Договор считается исполненным с момента вручения Товара Покупателю.
+      </p>
+
+      <h3>4. Цена договора и порядок оплаты</h3>
+      <p>
+        4.1. Цена Товара составляет {{ totals.sum|money }} руб., {% if
+        agreement.vat_rate %}в том числе НДС {{ agreement.vat_rate|money }}% в
+        размере {{ (vat_amount or 0)|money }} руб.{% else %}НДС не
+        предусмотрен{% endif %}.
+      </p>
+      <p>
+        4.2. Оплата производится Покупателем в момент заключения договора
+        наличными или иным согласованным способом.
+      </p>
+
+      <h3>5. Прочие условия</h3>
+      <p>
+        5.1. В остальной части применяются нормы действующего законодательства
+        Российской Федерации.
+      </p>
+      <p>
+        5.2. Споры разрешаются путём переговоров, а при недостижении согласия –
+        в {{ agreement.dispute_resolution or 'указанном сторонами органе' }}.
+      </p>
+
+      <h3>6. Реквизиты сторон</h3>
+      <div class="meta-grid" style="grid-template-columns: 1fr 1fr">
+        <div>
+          <strong>Продавец</strong><br />
+          {{ agreement.organization.name }}<br />
+          Адрес: {{ agreement.organization.address }}<br />
+          {% if agreement.organization.account %} р/с № {{
+          agreement.organization.account.account }}<br />
+          Банк: {{ agreement.organization.account.bank_name }}<br />
+          БИК {{ agreement.organization.account.bank_identity_number }}<br />
+          {% else %} Банковские реквизиты: —<br />
+          {% endif %}
+        </div>
+        <div>
+          <strong>Покупатель</strong><br />
+          {{ agreement.customer.name }}<br />
+          Адрес: {{ agreement.buyer_address or '—' }}<br />
+          Банк: {{ agreement.buyer_bank_name or '—' }}<br />
+          р/с {{ agreement.buyer_bank_account or '—' }}<br />
+          к/с {{ agreement.buyer_bank_corr_account or '—' }}<br />
+          БИК {{ agreement.buyer_bank_bik or '—' }}
+        </div>
+      </div>
+
+      <h3>Приложение: список товаров</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width: 8mm; text-align: center">№</th>
+            <th>Наименование</th>
+            <th style="width: 25mm">Ед. изм.</th>
+            <th style="width: 20mm; text-align: right">Кол-во</th>
+            <th style="width: 25mm; text-align: right">Цена</th>
+            <th style="width: 30mm; text-align: right">Сумма</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in agreement.items %} {% set line_total = item.quantity *
+          item.price %}
+          <tr>
+            <td style="text-align: center">{{ loop.index }}</td>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.product.unit.name }}</td>
+            <td style="text-align: right">{{ item.quantity }}</td>
+            <td style="text-align: right">{{ item.price|money }}</td>
+            <td style="text-align: right">{{ line_total|money }}</td>
+          </tr>
+          {% endfor %} {% if agreement.items|length == 0 %}
+          <tr>
+            <td colspan="6">
+              <small class="muted">Позиции отсутствуют</small>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" style="text-align: right; font-weight: 600">
+              Итого:
+            </td>
+            <td style="text-align: right; font-weight: 600">
+              {{ totals.sum|money }}
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+
+      <div class="signs" style="margin-top: 12mm">
+        <div>
+          Продавец ______________________
+          <div class="sign-line"></div>
+          <small>(подпись)</small>
+        </div>
+        <div>
+          Покупатель ______________________
+          <div class="sign-line"></div>
+          <small>(подпись)</small>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

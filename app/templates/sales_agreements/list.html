@@ -1,0 +1,46 @@
+{% extends "base.html" %} {% block content %}
+<h2>Список договоров купли-продажи</h2>
+<div class="toolbar">
+  <a class="btn" href="/sales-agreements/create">Создать</a>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Номер</th>
+      <th>Дата</th>
+      <th>Продавец</th>
+      <th>Покупатель</th>
+      <th>Сумма</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for agreement in agreements %} {% set totals = namespace(sum=0) %} {% for
+    item in agreement.items %} {% set totals.sum = totals.sum + (item.quantity *
+    item.price) %} {% endfor %}
+    <tr>
+      <td>{{ agreement.id }}</td>
+      <td>{{ agreement.agreement_number or ('№ ' ~ agreement.id) }}</td>
+      <td>{{ agreement.agreement_date|rusdate }}</td>
+      <td>{{ agreement.organization.name }}</td>
+      <td>{{ agreement.customer.name }}</td>
+      <td>{{ totals.sum }}</td>
+      <td>
+        <a href="/sales-agreements/{{ agreement.id }}/print" title="Печать"
+          >🖨️</a
+        >
+        <a
+          href="/sales-agreements/{{ agreement.id }}/edit"
+          title="Редактировать"
+          >✏️</a
+        >
+        <a href="/sales-agreements/{{ agreement.id }}/delete" title="Удалить"
+          >🗑️</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

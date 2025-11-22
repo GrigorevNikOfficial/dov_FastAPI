@@ -109,4 +109,46 @@ CREATE INDEX ix_departments_id ON departments (id);
 CREATE INDEX ix_positions_id ON positions (id);
 CREATE INDEX ix_proxies_id ON proxies (id);
 CREATE INDEX ix_proxy_items_id ON proxy_items (id);
+CREATE TABLE sales_agreements (
+	id INTEGER NOT NULL,
+	agreement_number VARCHAR(50),
+	agreement_date DATE NOT NULL,
+	city VARCHAR(100) NOT NULL,
+	organization_id INTEGER NOT NULL,
+	customer_id INTEGER NOT NULL,
+	seller_representative VARCHAR(255) NOT NULL,
+	seller_basis VARCHAR(255) NOT NULL,
+	subject_description TEXT,
+	buyer_passport_series VARCHAR(50),
+	buyer_passport_number VARCHAR(50),
+	buyer_passport_issued_by VARCHAR(255),
+	buyer_passport_issued_at DATE,
+	buyer_address VARCHAR(255),
+	buyer_bank_account VARCHAR(100),
+	buyer_bank_name VARCHAR(255),
+	buyer_bank_corr_account VARCHAR(100),
+	buyer_bank_bik VARCHAR(50),
+	dispute_resolution VARCHAR(255),
+	vat_rate NUMERIC(5, 2),
+	PRIMARY KEY (id),
+	FOREIGN KEY(organization_id) REFERENCES organizations (id),
+	FOREIGN KEY(customer_id) REFERENCES customers (id)
+);
+INSERT INTO sales_agreements VALUES(1,'SA-001','2025-01-15','Москва',1,1,'Иванов И.И.','Устав','Поставка канцтоваров',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,20.00);
+
+CREATE TABLE sales_agreement_items (
+	id INTEGER NOT NULL,
+	agreement_id INTEGER NOT NULL,
+	product_id INTEGER NOT NULL,
+	quantity NUMERIC(10, 2) NOT NULL,
+	price NUMERIC(10, 2) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY(agreement_id) REFERENCES sales_agreements (id) ON DELETE CASCADE,
+	FOREIGN KEY(product_id) REFERENCES products (id)
+);
+INSERT INTO sales_agreement_items VALUES(1,1,1,10.00,120.00);
+INSERT INTO sales_agreement_items VALUES(2,1,2,5.00,70.00);
+
+CREATE INDEX ix_sales_agreements_id ON sales_agreements (id);
+CREATE INDEX ix_sales_agreement_items_id ON sales_agreement_items (id);
 COMMIT;
