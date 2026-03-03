@@ -5,5 +5,5 @@ from typing import Literal
 
 DATABASE_URL: str = os.getenv(
     "DATABASE_URL",
-    "postgresql+psycopg://postgres:11111111@192.168.0.20:5432/dov_FastAPI"
+    "sqlite:///./db.sqlite3"
 )

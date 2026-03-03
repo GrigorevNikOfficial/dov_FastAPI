@@ -49,8 +49,10 @@ class SalesAgreementItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     agreement_id = Column(Integer, ForeignKey("sales_agreements.id"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    unit_id = Column(Integer, ForeignKey("units.id"), nullable=False)
     quantity = Column(Numeric(10, 2), nullable=False)
     price = Column(Numeric(10, 2), nullable=False)
 
     agreement = relationship("SalesAgreement", back_populates="items")
     product = relationship("Product")
+    unit = relationship("Unit")

@@ -7,6 +7,7 @@ from .common import OrmBase
 
 class SalesAgreementItemBase(OrmBase):
     product_id: int
+    unit_id: int
     quantity: Decimal
     price: Decimal
 

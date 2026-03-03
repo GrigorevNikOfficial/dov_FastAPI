@@ -92,6 +92,7 @@
     <thead>
       <tr>
         <th>Товар</th>
+        <th style="width: 140px">Ед. изм.</th>
         <th style="width: 120px">Кол-во</th>
         <th style="width: 140px">Цена</th>
         <th style="width: 60px"></th>
@@ -103,7 +104,14 @@
         <td>
           <select name="product_id">
             {% for product in products %}
-              <option value="{{ product.id }}" {% if item.product_id == product.id %}selected{% endif %}>{{ product.name }} ({{ product.unit.name }})</option>
+              <option value="{{ product.id }}" {% if item.product_id == product.id %}selected{% endif %}>{{ product.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td>
+          <select name="unit_id">
+            {% for unit in units %}
+              <option value="{{ unit.id }}" {% if item.unit_id == unit.id %}selected{% endif %}>{{ unit.name }}</option>
             {% endfor %}
           </select>
         </td>
@@ -117,7 +125,14 @@
         <td>
           <select name="product_id">
             {% for product in products %}
-              <option value="{{ product.id }}">{{ product.name }} ({{ product.unit.name }})</option>
+              <option value="{{ product.id }}">{{ product.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td>
+          <select name="unit_id">
+            {% for unit in units %}
+              <option value="{{ unit.id }}">{{ unit.name }}</option>
             {% endfor %}
           </select>
         </td>
@@ -143,7 +158,14 @@ function addRow() {
     <td>
       <select name="product_id">
         {% for product in products %}
-          <option value="{{ product.id }}">{{ product.name }} ({{ product.unit.name }})</option>
+          <option value="{{ product.id }}">{{ product.name }}</option>
+        {% endfor %}
+      </select>
+    </td>
+    <td>
+      <select name="unit_id">
+        {% for unit in units %}
+          <option value="{{ unit.id }}">{{ unit.name }}</option>
         {% endfor %}
       </select>
     </td>

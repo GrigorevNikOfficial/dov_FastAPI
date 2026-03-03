@@ -10,6 +10,7 @@ from ..crud import sales_agreement as crud_agreement
 from ..crud import organization as crud_org
 from ..crud import customer as crud_customer
 from ..crud import product as crud_product
+from ..crud import unit as crud_unit
 from ..schemas.sales_agreements import (
     SalesAgreementCreate,
     SalesAgreementUpdate,
@@ -40,18 +41,20 @@ def _optional_decimal(value: Optional[str]) -> Optional[Decimal]:
 
 def _build_items(
     product_ids: List[int],
+    unit_ids: List[int],
     quantities: List[str],
     prices: List[str],
 ) -> List[SalesAgreementItemCreate]:
     items: List[SalesAgreementItemCreate] = []
-    for pid, qty, price in zip(product_ids, quantities, prices):
+    for pid, uid, qty, price in zip(product_ids, unit_ids, quantities, prices):
         qty_val = _optional_decimal(qty)
         price_val = _optional_decimal(price)
-        if pid is None or qty_val is None or price_val is None:
+        if pid is None or uid is None or qty_val is None or price_val is None:
             continue
         items.append(
             SalesAgreementItemCreate(
                 product_id=int(pid),
+                unit_id=int(uid),
                 quantity=qty_val,
                 price=price_val,
             )
@@ -73,6 +76,7 @@ def create_form(request: Request, db: Session = Depends(get_db)):
     orgs = crud_org.get_organizations(db)
     customers = crud_customer.get_customers(db)
     products = crud_product.get_products(db)
+    units = crud_unit.get_units(db)
     return templates.TemplateResponse(
         "sales_agreements/create.html",
         {
@@ -80,6 +84,7 @@ def create_form(request: Request, db: Session = Depends(get_db)):
             "orgs": orgs,
             "customers": customers,
             "products": products,
+            "units": units,
         },
     )
 
@@ -106,11 +111,12 @@ def create_agreement(
     dispute_resolution: Optional[str] = Form(None),
     vat_rate: Optional[str] = Form(None),
     product_id: List[int] = Form([]),
+    unit_id: List[int] = Form([]),
     quantity: List[str] = Form([]),
     price: List[str] = Form([]),
     db: Session = Depends(get_db),
 ):
-    items = _build_items(product_id, quantity, price)
+    items = _build_items(product_id, unit_id, quantity, price)
     obj_in = SalesAgreementCreate(
         organization_id=organization_id,
         customer_id=customer_id,
@@ -143,6 +149,7 @@ def edit_form(agreement_id: int, request: Request, db: Session = Depends(get_db)
     orgs = crud_org.get_organizations(db)
     customers = crud_customer.get_customers(db)
     products = crud_product.get_products(db)
+    units = crud_unit.get_units(db)
     return templates.TemplateResponse(
         "sales_agreements/edit.html",
         {
@@ -151,6 +158,7 @@ def edit_form(agreement_id: int, request: Request, db: Session = Depends(get_db)
             "orgs": orgs,
             "customers": customers,
             "products": products,
+            "units": units,
         },
     )
 
@@ -178,11 +186,12 @@ def update_agreement(
     dispute_resolution: Optional[str] = Form(None),
     vat_rate: Optional[str] = Form(None),
     product_id: List[int] = Form([]),
+    unit_id: List[int] = Form([]),
     quantity: List[str] = Form([]),
     price: List[str] = Form([]),
     db: Session = Depends(get_db),
 ):
-    items = _build_items(product_id, quantity, price)
+    items = _build_items(product_id, unit_id, quantity, price)
     obj_in = SalesAgreementUpdate(
         organization_id=organization_id,
         customer_id=customer_id,

@@ -29,6 +29,7 @@ def create_sales_agreement(db: Session, obj_in: schemas.SalesAgreementCreate):
             models.SalesAgreementItem(
                 agreement_id=agreement.id,
                 product_id=item.product_id,
+                unit_id=item.unit_id,
                 quantity=item.quantity,
                 price=item.price,
             )
@@ -58,6 +59,7 @@ def update_sales_agreement(
             models.SalesAgreementItem(
                 agreement_id=db_obj.id,
                 product_id=item.product_id,
+                unit_id=item.unit_id,
                 quantity=item.quantity,
                 price=item.price,
             )
